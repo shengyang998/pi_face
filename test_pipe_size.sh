@@ -1,4 +1,5 @@
 #!/bin/bash
+# You can run this script with `/bin/bash -c 'for p in {0..18}; do ./test_pipe.sh $((2 ** $p)) 0.5; done'`, which allows you to check all possible values
 test $# -ge 1 || { echo "usage: $0 write-size [wait-time]"; exit 1; }
 test $# -ge 2 || set -- "$@" 1
 bytes_written=$(
