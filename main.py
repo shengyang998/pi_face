@@ -1,7 +1,6 @@
-import numpy as np
 import myfunctions as myf
 from CalculateFPS import CalculateFPS, DoEach
-from multiprocessing import Pool
+from multiprocessing import Pool, Array
 print("Importing OpenCV")
 import cv2
 print("OpenCV imported")
@@ -13,8 +12,8 @@ def convert_BGR_to_RGB(BGR_frame):
 
 
 def set_width_height(cap):
-    cap.set(3,160) # set Width
-    cap.set(4,120) # set Height
+    cap.set(3, 160)  # set Width
+    cap.set(4, 120)  # set Height
     return cap
 
 
@@ -59,22 +58,27 @@ def wait(key='q'):
 
 def capturing(cap):
     calculate_fps = CalculateFPS()
-    doeach = DoEach(times=300)
-    with Pool(processes=3) as pool:
+    counter = 0
+    doeach = DoEach(times=1)
+    with Pool(processes=4) as pool:
         while True:
+            counter += 1
             frame = capture_read(cap)
-            # cv2.imshow('frame', frame)
+            cv2.imshow('frame', frame)
+            # MARK: Reshape is needed, waiting to go on
+            # frame = Array('i', frame.reshape(-1), lock=False)
             doeach.do_async(pool, recognize, arg=frame)
-            #doeach.do(recognize, args=[frame])
             print("FPS: {0}".format(calculate_fps.calculte()))
-            print("Frame size: {0}".format(sys.getsizeof(frame)))
+            print("Frame size: {0} KByte".format(sys.getsizeof(frame)/1024))
             wait()  # Hit 'q' on the keyboard to quit!
+
 
 def release_resources(cap):
     print("Releasing Video Capture")
     cap.release()
     print("Video Capture Released")
     cv2.destroyAllWindows()
+    print("Resources is all retrieved. Will now quit.")
 
 
 def main():
@@ -84,10 +88,10 @@ def main():
         capturing(cap)
     except KeyboardInterrupt:
         print("OK, Retrieving resources before quit")
-        release_resources(cap)
-        print("Resources is all retrieved. Will now quit.")
-    except Exception as e:
-        print("An error occured: {0}".format(e))
+    # except Exception as e:
+    #     print("An error occurred: {0}".format(e))
+    #     pass
+    finally:
         release_resources(cap)
 
 

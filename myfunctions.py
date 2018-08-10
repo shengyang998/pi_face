@@ -1,3 +1,4 @@
+import sys
 import face_recognition as face_r
 from os import listdir
 from functools import lru_cache
@@ -31,15 +32,18 @@ def get_name_from_result(results):
 
 
 def is_face_in_white_list(face):
-    if face == None or face == []:
+    if face is None or face == []:
         return
     results = face_r.compare_faces([ f[1] for f in get_whitelist_faces() ], face[0])
-    if not True in results:
+    if True not in results:
         print("Attention: face not in white list")
+        sys.stdout.flush()
         return False
     else:
-        print("This is {0}'s face.".format(get_name_from_result(results)))
-        print("Welcome, {0}".format(get_name_from_result(results)))
+        name = get_name_from_result(results)
+        print("This is {0}'s face.".format(name))
+        print("Welcome, {0}".format(name))
+        sys.stdout.flush()
         return True
 
 
