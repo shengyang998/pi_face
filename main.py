@@ -1,94 +1,39 @@
-import myfunctions as myf
+from Controllers import *
 from EachEvents import CalculateFPS, DoEach
 from multiprocessing import Pool, Array
-print("Importing OpenCV")
-import cv2
-print("OpenCV imported")
 
 
-def convert_BGR_to_RGB(BGR_frame):
-    return BGR_frame[:, :, ::-1]
-
-
-def set_width_height(cap):
-    cap.set(3, 160)  # set Width
-    cap.set(4, 120)  # set Height
-    return cap
-
-
-def config_capture():
-    cap = cv2.VideoCapture(0)
-    cap = set_width_height(cap)
-    return cap
-
-
-def fix_camera_direction(frame):
-    return cv2.flip(frame, 1)
-
-
-def capture_read(cap):
-    _, frame = cap.read()
-    frame = fix_camera_direction(frame)
-    return frame
-
-
-def get_face_locations(frame):
-    return myf.face_r.face_locations(frame)
-
-
-def get_face_encodings(frame):
-    return myf.face_r.face_encodings(frame, get_face_locations(frame))
-
-
-def recognize(frame):
-    rgb_frame = convert_BGR_to_RGB(frame)
-    face = get_face_encodings(rgb_frame)
-    return myf.is_face_in_white_list(face)
-
-
-def wait(key='q'):
-    if cv2.waitKey(1) & 0xFF == ord(key):
-        exit(0)
-
-
-def capturing(cap):
+def capture_recognition(cv):
     calculate_fps = CalculateFPS()
     counter = 0
-    doeach = DoEach(times=1)
+    doeach = DoEach(times=5)
     with Pool(processes=4) as pool:
         while True:
             counter += 1
-            frame = capture_read(cap)
-            cv2.imshow('frame', frame)
-            # MARK: Reshape is needed for shared Memory, to be continue...
-            # frame = Array('i', frame.reshape(-1), lock=False)
-            doeach.do_async(pool, recognize, arg=frame)
+            frame = cv.capture_read()
+            cv.show_frame_with_name(frame=frame, name='frame')
+            # MARK: Reshape is needed for multiprocessing.Array
+            frame = Array('i', frame.reshape(-1), lock=False)
+            doeach.do_async(pool, cv.recognize, arg=frame)
             # MARK: Status Checking
             # print("FPS: {0}".format(calculate_fps.calculte()))
             # print("Frame size: {0} KByte".format(sys.getsizeof(frame)/1024))
-            wait()  # Hit 'q' on the keyboard to quit
-
-
-def release_resources(cap):
-    print("Releasing Video Capture")
-    cap.release()
-    print("Video Capture Released")
-    cv2.destroyAllWindows()
-    print("All resources are retrieved. Will now quit.")
+            cv.wait()  # Hit 'q' on the keyboard to quit
 
 
 def main():
     print("Capturing Video")
-    cap = config_capture()
+    cv = CVController()
+    cv.config_capture(width=640, height=480)
     try:
-        capturing(cap)
+        capture_recognition(cv)
     except KeyboardInterrupt:
         print("OK, Retrieving resources before quit")
-    except Exception as e:
-        print("An error occurred: {0}".format(e))
-        pass
+    # except Exception as e:
+    #     print("An error occurred: {0}".format(e))
+    #     pass
     finally:
-        release_resources(cap)
+        cv.release_resources()
 
 
 if __name__ == "__main__":
