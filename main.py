@@ -58,7 +58,7 @@ def wait(key='q'):
 
 def capturing(cap):
     calculate_fps = CalculateFPS()
-    doeach = DoEach(times=5)
+    doeach = DoEach(times=300)
     with Pool(processes=3) as pool:
         while True:
             frame = capture_read(cap)

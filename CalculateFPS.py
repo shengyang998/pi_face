@@ -3,12 +3,12 @@ from time import time
 
 class CalculateFPS:
 
-    last_time = time()
+    start_time = time()
+    counter = 0
 
     def calculte(self):
-        fps = int(1.0/(time() - self.last_time))
-        self.last_time = time()
-        return fps
+        counter += 1
+        return int(self.counter/(time() - self.start_time))
 
 
 class DoEach:
