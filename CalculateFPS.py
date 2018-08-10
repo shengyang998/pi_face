@@ -7,7 +7,7 @@ class CalculateFPS:
     counter = 0
 
     def calculte(self):
-        counter += 1
+        self.counter += 1
         return int(self.counter/(time() - self.start_time))
 
 
