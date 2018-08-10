@@ -5,6 +5,7 @@ from multiprocessing import Pool
 print("Importing OpenCV")
 import cv2
 print("OpenCV imported")
+import sys
 
 
 def convert_BGR_to_RGB(BGR_frame):
@@ -12,8 +13,8 @@ def convert_BGR_to_RGB(BGR_frame):
 
 
 def set_width_height(cap):
-    cap.set(3,640) # set Width
-    cap.set(4,480) # set Height
+    cap.set(3,160) # set Width
+    cap.set(4,120) # set Height
     return cap
 
 
@@ -62,9 +63,11 @@ def capturing(cap):
     with Pool(processes=3) as pool:
         while True:
             frame = capture_read(cap)
-            cv2.imshow('frame', frame)
-            doeach.do_async(pool, recognize, args=[frame])
+            # cv2.imshow('frame', frame)
+            doeach.do_async(pool, recognize, arg=frame)
+            #doeach.do(recognize, args=[frame])
             print("FPS: {0}".format(calculate_fps.calculte()))
+            print("Frame size: {0}".format(sys.getsizeof(frame)))
             wait()  # Hit 'q' on the keyboard to quit!
 
 def release_resources(cap):

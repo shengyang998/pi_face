@@ -7,8 +7,8 @@ class CalculateFPS:
     counter = 0
 
     def calculte(self):
-        self.counter += 1
-        return int(self.counter/(time() - self.start_time))
+        self.counter += 1.0
+        return self.counter/(time() - self.start_time)
 
 
 class DoEach:
@@ -20,11 +20,10 @@ class DoEach:
         self.times = 1
         self.counter = 0
 
-    def do(self, func, args=()):
-        args = list(args)
+    def do(self, func, arg):
         self.counter += 1
         if self.counter % self.times == 0:
-            return func(*args)
+            return func(arg)
 
-    def do_async(self, pool, func, args=()):
-        pool.apply_async(self.do(func, args))
+    def do_async(self, pool, func, arg):
+        pool.apply_async(self.do(func, arg))
