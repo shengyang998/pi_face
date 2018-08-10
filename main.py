@@ -4,7 +4,6 @@ from multiprocessing import Pool, Array
 print("Importing OpenCV")
 import cv2
 print("OpenCV imported")
-import sys
 
 
 def convert_BGR_to_RGB(BGR_frame):
@@ -47,10 +46,6 @@ def recognize(frame):
     return myf.is_face_in_white_list(face)
 
 
-def async_recognize(pool, frame):
-    pool.apply_async(recognize(frame))
-
-
 def wait(key='q'):
     if cv2.waitKey(1) & 0xFF == ord(key):
         exit(0)
@@ -65,12 +60,13 @@ def capturing(cap):
             counter += 1
             frame = capture_read(cap)
             cv2.imshow('frame', frame)
-            # MARK: Reshape is needed, waiting to go on
+            # MARK: Reshape is needed for shared Memory, to be continue...
             # frame = Array('i', frame.reshape(-1), lock=False)
             doeach.do_async(pool, recognize, arg=frame)
-            print("FPS: {0}".format(calculate_fps.calculte()))
-            print("Frame size: {0} KByte".format(sys.getsizeof(frame)/1024))
-            wait()  # Hit 'q' on the keyboard to quit!
+            # MARK: Status Checking
+            # print("FPS: {0}".format(calculate_fps.calculte()))
+            # print("Frame size: {0} KByte".format(sys.getsizeof(frame)/1024))
+            wait()  # Hit 'q' on the keyboard to quit
 
 
 def release_resources(cap):
@@ -78,7 +74,7 @@ def release_resources(cap):
     cap.release()
     print("Video Capture Released")
     cv2.destroyAllWindows()
-    print("Resources is all retrieved. Will now quit.")
+    print("All resources are retrieved. Will now quit.")
 
 
 def main():
@@ -88,9 +84,9 @@ def main():
         capturing(cap)
     except KeyboardInterrupt:
         print("OK, Retrieving resources before quit")
-    # except Exception as e:
-    #     print("An error occurred: {0}".format(e))
-    #     pass
+    except Exception as e:
+        print("An error occurred: {0}".format(e))
+        pass
     finally:
         release_resources(cap)
 

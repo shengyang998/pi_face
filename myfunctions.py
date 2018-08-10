@@ -42,26 +42,6 @@ def is_face_in_white_list(face):
     else:
         name = get_name_from_result(results)
         print("This is {0}'s face.".format(name))
-        print("Welcome, {0}".format(name))
+        print("Welcome back, {0}!".format(name))
         sys.stdout.flush()
         return True
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
