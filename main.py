@@ -1,19 +1,25 @@
+import numpy as np
+import myfunctions as myf
+from CalculateFPS import CalculateFPS, DoEach
+from multiprocessing import Pool
 print("Importing OpenCV")
 import cv2
 print("OpenCV imported")
-import numpy as np
-import myfunctions as myf
 
 
 def convert_BGR_to_RGB(BGR_frame):
     return BGR_frame[:, :, ::-1]
 
 
-def config_capture():
-    cap = cv2.VideoCapture(0)
+def set_width_height(cap):
     cap.set(3,640) # set Width
     cap.set(4,480) # set Height
-    cap.set(cv2.CAP_PROP_FPS, 0.1)
+    return cap
+
+
+def config_capture():
+    cap = cv2.VideoCapture(0)
+    cap = set_width_height(cap)
     return cap
 
 
@@ -41,11 +47,31 @@ def recognize(frame):
     return myf.is_face_in_white_list(face)
 
 
+def async_recognize(pool, frame):
+    pool.apply_async(recognize(frame))
+
+
+def wait(key='q'):
+    if cv2.waitKey(1) & 0xFF == ord(key):
+        exit(0)
+
+
 def capturing(cap):
-    while(True):
-        frame = capture_read(cap)
-        cv2.imshow('frame', frame)
-        recognize(frame)
+    calculate_fps = CalculateFPS()
+    doeach = DoEach(times=5)
+    with Pool(processes=3) as pool:
+        while True:
+            frame = capture_read(cap)
+            cv2.imshow('frame', frame)
+            doeach.do_async(pool, recognize, args=[frame])
+            print("FPS: {0}".format(calculate_fps.calculte()))
+            wait()  # Hit 'q' on the keyboard to quit!
+
+def release_resources(cap):
+    print("Releasing Video Capture")
+    cap.release()
+    print("Video Capture Released")
+    cv2.destroyAllWindows()
 
 
 def main():
@@ -55,18 +81,11 @@ def main():
         capturing(cap)
     except KeyboardInterrupt:
         print("OK, Retrieving resources before quit")
-        print("Releasing Video Capture")
-        cap.release()
-        print("Video Capture Released")
-        cv2.destroyAllWindows()
+        release_resources(cap)
         print("Resources is all retrieved. Will now quit.")
     except Exception as e:
         print("An error occured: {0}".format(e))
-        print("Releasing Video Capture")
-        cap.release()
-        print("Video Capture Released")
-        cv2.destroyAllWindows()
-
+        release_resources(cap)
 
 
 if __name__ == "__main__":

@@ -2,3 +2,4 @@ WhiteList/
 nohup.out
 *.log
 __pycache__/
+.idea/
