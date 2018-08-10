@@ -1,5 +1,5 @@
 import myfunctions as myf
-from CalculateFPS import CalculateFPS, DoEach
+from EachEvents import CalculateFPS, DoEach
 from multiprocessing import Pool, Array
 print("Importing OpenCV")
 import cv2
