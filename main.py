@@ -12,7 +12,7 @@ def recognize(frame):
 
 def capture_recognition():
     calculate_fps = CalculateFPS()
-    doeach = DoEach(times=5)
+    doeach = DoEach(times=20)
     with Pool(processes=4) as pool:
         while True:
             frame = CVController.capture_read()
@@ -28,7 +28,7 @@ def capture_recognition():
 
 def main():
     print("Capturing Video")
-    CVController.config_capture(width=640, height=480)
+    CVController.config_capture(width=160, height=120)
     try:
         capture_recognition()
     except KeyboardInterrupt:
