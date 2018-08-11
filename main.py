@@ -20,7 +20,7 @@ def capture_recognition(controller):
             # frame = Array('i', frame.reshape(-1), lock=False)
             doeach.do_async(pool, recognize, arg=frame)
             # MARK: Status Checking
-            print("FPS: {0}".format(calculate_fps.calculte()))
+            # print("FPS: {0}".format(calculate_fps.calculte()))
             # print("Frame size: {0} KByte".format(sys.getsizeof(frame)/1024))
             CVController.wait()  # Hit 'q' on the keyboard to quit
 
