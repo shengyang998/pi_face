@@ -56,7 +56,6 @@ class CVController:
     def get_face_encodings(cls, frame):
         return face_r.face_encodings(frame, cls.get_face_locations(frame))
 
-
     @classmethod
     def wait(cls, key='q'):
         if cv2.waitKey(1) & 0xFF == ord(key):
