@@ -17,7 +17,6 @@ class CVController:
 
     def __new__(cls, *args, **kw):
         if not cls._instance:
-            # cls.instance = object.__new__(cls, *args)
             cls._instance = super(CVController, cls).__new__(cls, *args, **kw)
         return cls._instance
 
@@ -32,9 +31,9 @@ class CVController:
         self.cap.set(3, width)  # set Width
         self.cap.set(4, height)  # set Height
 
-    def config_capture(self, width, height, should_show=True):
+    def config_capture(self, width, height, device_code=0, should_show=True):
         if self.cap is None:
-            self.cap = cv2.VideoCapture(0)
+            self.cap = cv2.VideoCapture(device_code)
             self.should_show = should_show
         self.set_width_height(width, height)
 
