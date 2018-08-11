@@ -19,7 +19,7 @@ def capture_recognition():
             # CVController.show_frame_with_name(frame=frame, name='frame')
             # MARK: Reshape is needed for multiprocessing.Array. However doing so will cause lock, to be continue...
             # frame = Array('i', frame.reshape(-1), lock=False)
-            doeach.do_async(pool, CVController.recognize, arg=frame)
+            doeach.do_async(pool, recognize, arg=frame)
             # MARK: Status Checking
             print("FPS: {0}".format(calculate_fps.calculte()))
             # print("Frame size: {0} KByte".format(sys.getsizeof(frame)/1024))
