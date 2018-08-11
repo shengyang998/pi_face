@@ -10,13 +10,12 @@ def recognize(frame):
     return Recognition.is_in_white_list(face)
 
 
-def capture_recognition():
+def capture_recognition(cv):
     calculate_fps = CalculateFPS()
     doeach = DoEach(times=20)
     with Pool(processes=4) as pool:
         while True:
-            frame = CVController.capture_read()
-            # CVController.show_frame_with_name(frame=frame, name='frame')
+            frame = cv.capture_read_show(name='frame')
             # MARK: Reshape is needed for multiprocessing.Array. However doing so will cause lock, to be continue...
             # frame = Array('i', frame.reshape(-1), lock=False)
             doeach.do_async(pool, recognize, arg=frame)
@@ -28,16 +27,17 @@ def capture_recognition():
 
 def main():
     print("Capturing Video")
-    CVController.config_capture(width=160, height=120)
+    cv = CVController()
+    cv.config_capture(width=160, height=120)
     try:
-        capture_recognition()
+        capture_recognition(cv)
     except KeyboardInterrupt:
         print("OK, Retrieving resources before quit")
     # except Exception as e:
     #     print("An error occurred: {0}".format(e))
     #     pass
     finally:
-        CVController.release_resources()
+        cv.release_resources()
 
 
 if __name__ == "__main__":

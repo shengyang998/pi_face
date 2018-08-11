@@ -12,59 +12,61 @@ class CVController:
 
     cap = None
     shape_of_frame = None
+    should_show = None
+    _instance = None
 
-    @classmethod
-    def show_frame_with_name(cls, frame, name):
-        cv2.imshow(name, frame)
+    def __new__(cls, *args, **kw):
+        if not cls._instance:
+            # cls.instance = object.__new__(cls, *args)
+            cls._instance = super(CVController, cls).__new__(cls, *args, **kw)
+        return cls._instance
 
-    @classmethod
-    def convert_BGR_to_RGB(cls, BGR_frame):
+    def show_frame_with_name(self, frame, name):
+        if self.should_show is True:
+            cv2.imshow(name, frame)
+
+    def convert_BGR_to_RGB(self, BGR_frame):
         return BGR_frame[:, :, ::-1]
 
-    @classmethod
-    def set_width_height(cls, width, height):
-        cls.cap.set(3, width)  # set Width
-        cls.cap.set(4, height)  # set Height
+    def set_width_height(self, width, height):
+        self.cap.set(3, width)  # set Width
+        self.cap.set(4, height)  # set Height
 
-    @classmethod
-    def config_capture(cls, width, height):
-        if cls.cap is None:
-            cls.cap = cv2.VideoCapture(0)
-        cls.set_width_height(width, height)
+    def config_capture(self, width, height, should_show=True):
+        if self.cap is None:
+            self.cap = cv2.VideoCapture(0)
+            self.should_show = should_show
+        self.set_width_height(width, height)
 
-    @classmethod
-    def fix_camera_direction(cls, frame):
+    @staticmethod
+    def fix_camera_direction(frame):
         return cv2.flip(frame, 1)
 
-    @classmethod
-    def capture_read(cls):
-        _, frame = cls.cap.read()
-        frame = cls.fix_camera_direction(frame)
-        cls.set_shape(frame)
+    def capture_read_show(self, name):
+        _, frame = self.cap.read()
+        frame = self.fix_camera_direction(frame)
+        self.show_frame_with_name(frame, name=name)
+        # self.set_shape(frame)
         return frame
 
-    @classmethod
-    def set_shape(cls, frame):
-        if cls.shape_of_frame is None:
-            cls.shape_of_frame = frame.shape
+    def set_shape(self, frame):
+        if self.shape_of_frame is None:
+            self.shape_of_frame = frame.shape
 
-    @classmethod
-    def get_face_locations(cls, frame):
+    def get_face_locations(self, frame):
         return face_r.face_locations(frame)
 
-    @classmethod
-    def get_face_encodings(cls, frame):
-        return face_r.face_encodings(frame, cls.get_face_locations(frame))
+    def get_face_encodings(self, frame):
+        return face_r.face_encodings(frame, self.get_face_locations(frame))
 
-    @classmethod
-    def wait(cls, key='q'):
+    @staticmethod
+    def wait(key='q'):
         if cv2.waitKey(1) & 0xFF == ord(key):
             exit(0)
 
-    @classmethod
-    def release_resources(cls):
+    def release_resources(self):
         print("Releasing Video Capture")
-        cls.cap.release()
+        self.cap.release()
         print("Video Capture Released")
         cv2.destroyAllWindows()
         print("All resources are retrieved. Will now quit.")
