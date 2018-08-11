@@ -15,7 +15,7 @@ python3 main.py
 - [Python3.x](http://python.org/)
 - [OpenCV](https://opencv.org/)
 - [face_recognition](https://github.com/ageitgey/face_recognition)
-    - for *face_recognition*, you need `dlib` install on your system
+    - for *face_recognition*, you need `dlib` installed on your system
         if the recognition takes too much time, you should consider compile dlib by yourself
 - [dlib](https://github.com/davisking/dlib)
     - [The installation guide of dlib](./dlib_installation.md)
