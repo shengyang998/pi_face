@@ -13,53 +13,59 @@ class CVController:
     cap = None
     shape_of_frame = None
 
-    def show_frame_with_name(self, frame, name):
+    @classmethod
+    def show_frame_with_name(cls, frame, name):
         cv2.imshow(name, frame)
 
-    def convert_BGR_to_RGB(self, BGR_frame):
+    @classmethod
+    def convert_BGR_to_RGB(cls, BGR_frame):
         return BGR_frame[:, :, ::-1]
 
-    def set_width_height(self, width, height):
-        self.cap.set(3, width)  # set Width
-        self.cap.set(4, height)  # set Height
+    @classmethod
+    def set_width_height(cls, width, height):
+        cls.cap.set(3, width)  # set Width
+        cls.cap.set(4, height)  # set Height
 
-    def config_capture(self, width, height):
-        if self.cap is None:
-            self.cap = cv2.VideoCapture(0)
-        self.set_width_height(width, height)
+    @classmethod
+    def config_capture(cls, width, height):
+        if cls.cap is None:
+            cls.cap = cv2.VideoCapture(0)
+        cls.set_width_height(width, height)
 
-    def fix_camera_direction(self, frame):
+    @classmethod
+    def fix_camera_direction(cls, frame):
         return cv2.flip(frame, 1)
 
-    def capture_read(self):
-        _, frame = self.cap.read()
-        frame = self.fix_camera_direction(frame)
-        self.set_shape(frame)
+    @classmethod
+    def capture_read(cls):
+        _, frame = cls.cap.read()
+        frame = cls.fix_camera_direction(frame)
+        cls.set_shape(frame)
         return frame
 
-    def set_shape(self, frame):
-        if self.shape_of_frame is None:
-            self.shape_of_frame = frame.shape
+    @classmethod
+    def set_shape(cls, frame):
+        if cls.shape_of_frame is None:
+            cls.shape_of_frame = frame.shape
 
-    def get_face_locations(self, frame):
+    @classmethod
+    def get_face_locations(cls, frame):
         return face_r.face_locations(frame)
 
-    def get_face_encodings(self, frame):
-        return face_r.face_encodings(frame, self.get_face_locations(frame))
+    @classmethod
+    def get_face_encodings(cls, frame):
+        return face_r.face_encodings(frame, cls.get_face_locations(frame))
 
-    def recognize(self, frame):
-        frame = frame.reshape(self.shape_of_frame)
-        rgb_frame = self.convert_BGR_to_RGB(frame)
-        face = self.get_face_encodings(rgb_frame)
-        return Recognition.is_face_in_white_list(face)
 
-    def wait(self, key='q'):
+    @classmethod
+    def wait(cls, key='q'):
         if cv2.waitKey(1) & 0xFF == ord(key):
             exit(0)
 
-    def release_resources(self):
+    @classmethod
+    def release_resources(cls):
         print("Releasing Video Capture")
-        self.cap.release()
+        cls.cap.release()
         print("Video Capture Released")
         cv2.destroyAllWindows()
         print("All resources are retrieved. Will now quit.")
@@ -95,7 +101,7 @@ class Recognition:
         return cls.get_whitelist_faces()[results.index(True)][0]
 
     @classmethod
-    def is_face_in_white_list(cls, face):
+    def is_in_white_list(cls, face):
         if face is None or face == []:
             return
         results = face_r.compare_faces([ f[1] for f in cls.get_whitelist_faces() ], face[0])
