@@ -2,11 +2,18 @@
 This is a python script for Face Recognition with multiporocessing
 
 # Usage
-```shell
-pip3 install -U face_recognition
-git clone --depth=1 https://github.com/shengyang998/pi_face
-python3 main.py
-```
+1. Install face_recognition python package
+    ```shell
+    pip3 install -U face_recognition
+    ```
+2. git clone this repo
+    ```shell
+    git clone --depth=1 https://github.com/shengyang998/pi_face
+    ```
+3. Put your white list photos to `./WhiteList/` and:
+    ```shell
+    python3 main.py
+    ```
 
 # Prerequisites
 - A Computer
@@ -22,7 +29,7 @@ python3 main.py
     - [The installation guide of dlib](./dlib_installation.md)
 
 # Tools for checking pipeline size on your system:
-The *nix platform use pipeline to exchange information in different processes.
+The \*nix platform use pipeline to exchange information in different processes.
 However, pipeline should not use for exchanging large file, so if your resolution so high that could cause a performance issue, you may want to change the code from passing frame to pipeline to passing multiprocessing.Array to pipeline (which I haven't implemented). 
 To check your pipeline size: 
 ```shell
