@@ -12,7 +12,7 @@ python3 main.py
 - A Computer
 - A Camera
 - The appropriate Driver of the Camera
-    - [Camera guide for Raspberry pi](./V4L_installation_on_Raspberry_pi.md)
+    - [uv4l guide for Raspberry pi](./uv4l_installation_on_Raspberry_pi.md)
 - [Python3.x](http://python.org/)
 - [OpenCV](https://opencv.org/)
 - [face_recognition](https://github.com/ageitgey/face_recognition)
